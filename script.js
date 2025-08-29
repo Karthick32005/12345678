@@ -1,6 +1,9 @@
-// Replace with ESP32 local IP from Serial Monitor
-const ESP32_IP = 'http://192.168.140.137';
+// Replace with ESP32 local IP
+let ESP32_IP = 'http://192.168.1.100';
+let connected = false;
 
+const statusText = document.getElementById("status");
+const connectBtn = document.getElementById("connectBtn");
 const stick = document.getElementById("stick");
 const joystick = document.getElementById("joystick");
 const speedSlider = document.getElementById("speed");
@@ -9,10 +12,24 @@ const speedValue = document.getElementById("speedValue");
 let offsetX = 0, offsetY = 0;
 
 function sendCommand(cmd, speed){
+  if(!connected) return;
   fetch(ESP32_IP + "/" + cmd + "?speed=" + speed)
     .then(res => console.log(cmd + " at speed " + speed))
     .catch(err => console.error(err));
 }
+
+connectBtn.addEventListener("click", () => {
+  // Test connection by sending a simple request
+  fetch(ESP32_IP + "/S")
+    .then(() => {
+      connected = true;
+      statusText.innerText = "Status: Connected";
+    })
+    .catch(() => {
+      connected = false;
+      statusText.innerText = "Status: Connection Failed";
+    });
+});
 
 speedSlider.addEventListener("input", () => {
   speedValue.innerText = speedSlider.value;
@@ -30,7 +47,7 @@ function startDrag(e){
 }
 
 function drag(e){
-  if(e.buttons !== 1) return;
+  if(!connected || e.buttons !== 1) return;
 
   let x = e.offsetX - offsetX;
   let y = e.offsetY - offsetY;
