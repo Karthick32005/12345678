@@ -4,6 +4,17 @@ body {
   margin-top: 50px;
 }
 
+button {
+  font-size: 18px;
+  padding: 10px 20px;
+  margin: 10px;
+  cursor: pointer;
+}
+
+#status {
+  font-weight: bold;
+}
+
 #joystick {
   width: 200px;
   height: 200px;
